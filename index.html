@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
     <meta charset="UTF-8">
@@ -15,29 +16,13 @@
             align-items: flex-start;
             position: fixed;
             bottom: 0;
-            background-image: linear-gradient(to top, #8b0000, #323c4d);
+            background: #323c4d;
             color: white;
             text-align: center;
-            font-size: 18px;
             z-index: 9999;
-            min-height: 72px;
-            max-height: 72px;
-        }
-
-        @media screen and (max-height: 1079px) {
-            .ticker-background {
-                font-size: 13px;
-                min-height: 54px;
-                max-height: 54px;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .ticker-background {
-                font-size: 8.6px;
-                min-height: 36px;
-                max-height: 36px;
-            }
+            font-size: 8.6px;
+            min-height: 36px;
+            max-height: 36px;
         }
 
         .ticker-container {
@@ -51,25 +36,11 @@
         }
 
         .league-logo {
-            max-height: 56px;
-            padding: 8px;
+            max-height: 28px;
+            padding: 4px;
             vertical-align: middle;
             display: none;
             animation: logoentrance 2s ease 0s 1 normal forwards;
-        }
-
-        @media screen and (max-height: 1079px) {
-            .league-logo {
-                max-height: 42px;
-                padding: 6px;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .league-logo {
-                max-height: 28px;
-                padding: 4px;
-            }
         }
 
         .team {
@@ -88,7 +59,7 @@
         }
 
         .team-logo {
-            max-height: 56px;
+            max-height: 28px;
             width: auto;
             height: auto;
             margin: auto;
@@ -96,33 +67,9 @@
             animation: entrance 2s ease 0s 1 normal forwards;
         }
 
-        @media screen and (max-height: 1079px) {
-            .team-logo {
-                max-height: 42px;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .team-logo {
-                max-height: 28px;
-            }
-        }
-
         .team-season {
             padding-left: 1rem;
-            font-size: 1.5rem !important;
-        }
-
-        @media screen and (max-height: 1079px) {
-            .team-season {
-                font-size: 1.125rem !important;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .team-season {
-                font-size: 0.75rem !important;
-            }
+            font-size: 0.75rem !important;
         }
 
         .team-score {
@@ -132,19 +79,7 @@
 
         .main-text {
             font-family: 'Oswald';
-            font-size: 3rem;
-        }
-
-        @media screen and (max-height: 1079px) {
-            .main-text {
-                font-size: 2.25rem;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .main-text {
-                font-size: 1.5rem;
-            }
+            font-size: 1.5rem;
         }
 
         .scoreboard-text {
@@ -177,83 +112,33 @@
 
         .leader-container {
             display: flex;
-            min-height: 72px;
-        }
-
-        @media screen and (max-height: 1079px) {
-            .leader-container {
-                min-height: 54px;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .leader-container {
-                min-height: 36px;
-            }
+            min-height: 36px;
         }
 
         .leader-rank {
             font-family: 'Oswald';
-            font-size: 2rem;
+            font-size: 1rem;
             align-self: flex-end;
-        }
-
-        @media screen and (max-height: 1079px) {
-            .leader-rank {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .leader-rank {
-                font-size: 1rem;
-            }
         }
 
         .leader-stat-team-logo {
-            max-height: 56px;
+            max-height: 28px;
+            padding: 0 .5rem;
             width: auto;
             height: auto;
-            padding: 0 1rem;
             align-self: center;
         }
 
-        @media screen and (max-height: 1079px) {
-            .leader-stat-team-logo {
-                max-height: 42px;
-                padding: 0 .75rem;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .leader-stat-team-logo {
-                max-height: 28px;
-                padding: 0 .5rem;
-            }
-        }
-        
         .leader-stat-amount {
             font-family: 'Oswald';
-            font-size: 3rem;
+            font-size: 1.5rem;
             align-self: flex-end;
-        }
-
-        @media screen and (max-height: 1079px) {
-            .leader-stat-amount {
-                font-size: 2.25rem;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .leader-stat-amount {
-                font-size: 1.5rem;
-            }
         }
 
         .leader-stat-team-logo-container {
             display: flex;
         }
-        
+
         .marquee {
             display: none;
             overflow: hidden;
@@ -266,24 +151,12 @@
             display: flex;
             align-items: center;
             justify-content: space-around;
-            gap: 5rem;
+            gap: 2.5rem;
             min-width: 100%;
             min-height: 100%;
             animation: scroll 35s linear infinite;
         }
 
-        @media screen and (max-height: 1079px) {
-            .marquee-group {
-                gap: 3.75rem;
-            }
-        }
-
-        @media screen and (max-height: 719px) {
-            .marquee-group {
-                gap: 2.5rem;
-            }
-        }
-        
         @keyframes logoentrance {
             0% {
                 transform: translateY(250px);
@@ -312,12 +185,14 @@
             from {
                 transform: translateX(25%);
             }
+
             to {
                 transform: translateX(-100%);
             }
         }
     </style>
 </head>
+
 <body>
     <div class="ticker-background ticker-container">
         <img src="https://i.imgur.com/TaKg7Kt.png" class="league-logo" id="logo">
@@ -442,11 +317,11 @@
         let xblBaLeaders = [];
         let aaaBaLeaders = [];
         let aaBaLeaders = [];
-        
+
         let xblKLeaders = [];
         let aaaKLeaders = [];
         let aaKLeaders = [];
-        
+
         let scoreIndex = 0; // loops 0 - 5 for recent scores
         let leagueIndex = 0; // 0 = XBL, 1 = AAA, 2 = AA
         let leaderboardStatTypeIndex = 0; // 0 = Ks, 1 = Homeruns, 2 = Batting Avg
@@ -457,7 +332,7 @@
         let visibleHrLeaders;
         let visibleKLeaders;
         let visibleBaLeaders;
-        
+
         async function updateTicker(leagueIndex) {
             for (const element of document.getElementsByClassName('team-info')) {
                 element.style.display = 'none';
@@ -507,7 +382,7 @@
             const awayScore = score.awayScore;
             const homeScore = score.homeScore;
             const homeTeam = score.homeTeam;
-            
+
             document.getElementById('awayLogo').src = teamLogos[score.awayTeam];
             document.getElementById('awayTeam').textContent = `${awayTeam}`;
             document.getElementById('awaySeason').textContent = `(${visibleStandings[awayTeam].wins} - ${visibleStandings[awayTeam].losses})`;
@@ -556,7 +431,7 @@
                 dataPromises.push(
                     fetch(url, { "method": "GET" })
                         .then((response) => { return response.json(); })
-                        .then((json) => process(json))    
+                        .then((json) => process(json))
                 );
             }
 
@@ -710,20 +585,21 @@
             document.getElementById('bookend-text').textContent = leaderboardStatsTitle
 
             for (let i = 0; i < 10; i++) {
-                document.getElementById(`leader-stat-logo-${i+1}`).src = teamLogos[leaderboardStats[i].team];
-                document.getElementById(`leader-stat-${i+1}`).textContent = leaderboardStats[i].value;
+                document.getElementById(`leader-stat-logo-${i + 1}`).src = teamLogos[leaderboardStats[i].team];
+                document.getElementById(`leader-stat-${i + 1}`).textContent = leaderboardStats[i].value;
             }
         }
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms))
         }
-        
-       refreshData()
+
+        refreshData()
             .then(async () => await updateTicker(leagueIndex))
             .then(setInterval(async () => await updateTicker(leagueIndex), 11000)); // Update every ~10 seconds
         setInterval(switchLeagues, 66000); // Switch leagues every ~minute
         setInterval(refreshData, 300000); // Refresh scores every 5 minutes
     </script>
 </body>
+
 </html>
