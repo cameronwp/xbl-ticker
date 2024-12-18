@@ -76,7 +76,6 @@
             width: 624px;
             display: flex;
             justify-content: space-between;
-            padding: 0 1rem;
         }
 
         .matchup:first-child {
@@ -85,13 +84,24 @@
 
         .team {
             width: 100%;
+            min-width: 314px;
         }
 
         .team-info {
             display: flex;
             flex-direction: row;
             animation: entrance 2s ease 0s 1 normal forwards;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+        }
+
+        .team:first-of-type {
+            border-right: 2px white solid;
+        }
+
+        .team-name {
+            display: flex;
+            justify-content: flex-start;
         }
 
         .team-logo {
@@ -101,20 +111,12 @@
             margin-top: auto;
             margin-bottom: auto;
             animation: entrance 2s ease 0s 1 normal forwards;
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
+            padding-right: 1rem;
         }
 
         .team-season {
             padding-left: 1rem;
             font-size: 0.75rem !important;
-        }
-
-        .score {
-            width: 32em;
-            display: flex;
-            justify-content: center;
-            animation: entrance 2s ease 0s 1 normal forwards;
         }
 
         .team-score:first-of-type::after {
@@ -261,27 +263,29 @@
                 </div>
                 <div class="matchup">
                     <div class="team">
-                        <div class="team-info">
-                            <div class="main-text scoreboard-text" id="awayTeam"></div>
-                            <div class="season">
-                                <div class="space-filler"></div>
-                                <div class="team-season main-text scoreboard-text" id="awaySeason"></div>
+                        <div class="team-info team-info-left">
+                            <div class="team-name">
+                                <img class="team-logo" id="awayLogo">
+                                <div class="main-text scoreboard-text" id="awayTeam"></div>
+                                <div class="season">
+                                    <div class="space-filler"></div>
+                                    <div class="team-season main-text scoreboard-text" id="awaySeason"></div>
+                                </div>
                             </div>
+                            <div class="team-score main-text scoreboard-text" id="awayScore"></div>
                         </div>
-                    </div>
-                    <div class="score">
-                        <img class="team-logo" id="awayLogo">
-                        <div class="team-score main-text scoreboard-text" id="awayScore"></div>
-                        <div class="team-score main-text scoreboard-text" id="homeScore"></div>
-                        <img class="team-logo" id="homeLogo">
                     </div>
                     <div class="team">
                         <div class="team-info">
-                            <div class="main-text scoreboard-text" id="homeTeam"></div>
-                            <div class="season">
-                                <div class="space-filler"></div>
-                                <div class="team-season main-text scoreboard-text" id="homeSeason"></div>
+                            <div class="team-name">
+                                <img class="team-logo" id="homeLogo">
+                                <div class="main-text scoreboard-text" id="homeTeam"></div>
+                                <div class="season">
+                                    <div class="space-filler"></div>
+                                    <div class="team-season main-text scoreboard-text" id="homeSeason"></div>
+                                </div>
                             </div>
+                            <div class="team-score main-text scoreboard-text" id="homeScore"></div>
                         </div>
                     </div>
                 </div>
@@ -407,9 +411,6 @@
             for (const element of document.getElementsByClassName('team-logo')) {
                 element.classList.add('exit');
             }
-            for (const element of document.getElementsByClassName('score')) {
-                element.classList.add('exit');
-            }
 
             await sleep(1000);
 
@@ -418,10 +419,6 @@
                 element.style.display = 'none';
             }
             for (const element of document.getElementsByClassName('team-logo')) {
-                element.classList.remove('exit');
-                element.style.display = 'none';
-            }
-            for (const element of document.getElementsByClassName('score')) {
                 element.classList.remove('exit');
                 element.style.display = 'none';
             }
