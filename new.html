@@ -85,7 +85,7 @@
     }
 
     .winner {
-      color: yellow;
+      color: #dcb506;
     }
 
     .marquee {
@@ -97,6 +97,7 @@
       justify-content: space-between;
 
       width: calc(var(--score-width) / 2);
+      max-height: 36px;
       padding: 0 4px;
     }
 
@@ -111,6 +112,15 @@
 
     .team-name {
       padding-left: 0.5em;
+    }
+
+    .team-record {
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      padding-left: 0.5em;
+      padding-bottom: 4px;
+      font-size: 1rem;
     }
 
     @keyframes vertical-scroll-3 {
@@ -935,7 +945,7 @@
     }
 
 
-    const makeTeam = (name = "Unknown", record = "0-0", score = "0", away = false, winner = false) => {
+    const makeTeam = (name = "Unknown", score = "0", away = false, winner = false, league) => {
       const team = document.createElement("div");
       team.classList.add("team");
       if (away) {
@@ -946,11 +956,30 @@
         team.classList.add("winner");
       }
 
+      let wins, losses = 0;
+
+      switch (league) {
+        case "XBL":
+          wins = xblStandings[name].wins;
+          losses = xblStandings[name].losses;
+          break;
+        case "AAA":
+          wins = aaaStandings[name].wins;
+          losses = aaaStandings[name].losses;
+          break;
+        case "AA":
+          wins = aaStandings[name].wins;
+          losses = aaStandings[name].losses;
+          break;
+        default:
+          break;
+      }
+
       const teamHtmlFragment = `
         <div class="team-info">
           <div class="team-logo"><img src="${teamLogos[name]}" style="max-width: 28px;"></div>
           <div class="team-name">${name}</div>
-          <div class="team-record">(${record})</div>
+          <div class="team-record"><div>(${wins}-${losses})</div></div>
         </div>
         <div class="score">${score}</div>
       `;
@@ -960,12 +989,12 @@
       return team;
     }
 
-    const makeMatchup = (awayTeam, awayScore, homeTeam, homeScore) => {
+    const makeMatchup = (awayTeam, awayScore, homeTeam, homeScore, league) => {
       const matchup = document.createElement("div");
       matchup.classList.add("matchup");
 
-      matchup.appendChild(makeTeam(awayTeam, "0-0", awayScore, true, +awayScore > +homeScore));
-      matchup.appendChild(makeTeam(homeTeam, "0-0", homeScore, false, +homeScore > +awayScore));
+      matchup.appendChild(makeTeam(awayTeam, awayScore, true, +awayScore > +homeScore, league));
+      matchup.appendChild(makeTeam(homeTeam, homeScore, false, +homeScore > +awayScore, league));
 
       return matchup;
     }
@@ -979,19 +1008,19 @@
     // add every game twice in a loop
     for (let i = 0; i < recentXBLScores.length * 2; i++) {
       const game = recentXBLScores[i % recentXBLScores.length];
-      const matchup = makeMatchup(game['awayTeam'], game['awayScore'], game['homeTeam'], game['homeScore']);
+      const matchup = makeMatchup(game['awayTeam'], game['awayScore'], game['homeTeam'], game['homeScore'], "XBL");
       addScore(matchup);
     }
 
     for (let i = 0; i < recentAAAScores.length * 2; i++) {
       const game = recentAAAScores[i % recentAAAScores.length];
-      const matchup = makeMatchup(game['awayTeam'], game['awayScore'], game['homeTeam'], game['homeScore']);
+      const matchup = makeMatchup(game['awayTeam'], game['awayScore'], game['homeTeam'], game['homeScore'], "AAA");
       addScore(matchup);
     }
 
     for (let i = 0; i < recentAAScores.length * 2; i++) {
       const game = recentAAScores[i % recentAAScores.length];
-      const matchup = makeMatchup(game['awayTeam'], game['awayScore'], game['homeTeam'], game['homeScore']);
+      const matchup = makeMatchup(game['awayTeam'], game['awayScore'], game['homeTeam'], game['homeScore'], "AA");
       addScore(matchup);
     }
 
