@@ -13,7 +13,11 @@
       --league-width: 50px;
       --score-width: 650px;
 
+      --marquee-width: calc(1920px - var(--league-width) - var(--score-width));
+      --marquee-header: 100px;
+
       --score-box-cycle: 480s;
+      --marquee-cycle: 20s;
     }
 
     body {
@@ -61,6 +65,7 @@
     .league-logo {
       height: 28px;
       margin-top: 4px;
+      margin-left: 4px;
     }
 
     .score-box {
@@ -86,10 +91,6 @@
 
     .winner {
       color: #dcb506;
-    }
-
-    .marquee {
-      width: calc(1920px - var(--league-width) - var(--score-width));
     }
 
     .team {
@@ -121,6 +122,61 @@
       padding-left: 0.5em;
       padding-bottom: 4px;
       font-size: 1rem;
+    }
+
+    .marquee {
+      width: var(--marquee-width);
+    }
+
+    .marquee-category {
+      display: flex;
+    }
+
+    .marquee-header {
+      min-width: var(--marquee-header);
+      padding-left: 4px;
+    }
+
+    .marquee-scroll-container {
+      width: calc(var(--marquee-width) - var(--marquee-header));
+      overflow-x: hidden;
+      margin-left: 8px;
+    }
+
+    .marquee-scroll {
+      white-space: nowrap;
+      animation: horizontal-scroll var(--marquee-cycle) linear 0s infinite forwards;
+    }
+
+    .leader-list {
+      display: flex;
+    }
+
+    .list-entry {
+      display: flex;
+      width: 10em;
+    }
+
+    .position {
+      display: flex;
+      flex-direction: column;
+      justify-content: end;
+      padding-bottom: 4px;
+      font-size: 1rem;
+    }
+
+    .stat {
+      margin-left: 4px;
+    }
+
+    @keyframes horizontal-scroll {
+      0% {
+        transform: translateX(calc(var(--marquee-width)))
+      }
+
+      100% {
+        transform: translateX(calc(var(--marquee-width) * -0.5))
+      }
     }
 
     @keyframes vertical-scroll-3 {
@@ -782,7 +838,97 @@
           id="logo"></div>
     </div>
     <div class="score-box"></div>
-    <div class="marquee border-left">3</div>
+    <div class="marquee border-left">
+      <div class="marquee-category">
+        <div class="marquee-header">BA Leaders</div>
+        <div class="marquee-scroll-container">
+          <div class="marquee-scroll">
+            <div class="leader-list">
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+              <div class="list-entry">
+                <div class="position">
+                  <div>1.</div>
+                </div>
+                <div class="list-entry-logo"><img src="https://i.imgur.com/6e0NYVE.png" class="league-logo" id="logo">
+                </div>
+                <div class="stat">10</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script type="module">
@@ -808,6 +954,7 @@
 
     // key page elements
     const DIV_SCOREBOX = document.querySelector(".score-box");
+    const DIV_MARQUEE = document.querySelector(".marquee")
 
 
     // data
@@ -1003,7 +1150,64 @@
       DIV_SCOREBOX.appendChild(matchup);
     }
 
+    const makeLeaderListEntry = (position, team, stat) => {
+      const entry = document.createElement("div");
+      entry.classList.add("list-entry");
+
+      entry.innerHTML = `
+        <div class="position"><div>${position}.</div></div>
+        <div class="list-entry-logo">
+          <img src="${teamLogos[team]}" class="league-logo">
+        </div>
+        <div class="stat">${stat}</div>
+      `;
+
+      return entry;
+    }
+
+    /**
+     *
+     * @param entries list of {position, team, stat} objects
+    */
+    const makeLeaderList = (entries) => {
+      const leaderList = document.createElement("div");
+      div.classList.add("leader-list");
+
+      entries.forEach((entry) => {
+        leaderList.appendChild(
+          makeLeaderListEntry(entry.position, entry.team, entry.stat)
+        );
+      })
+
+      return leaderList;
+    };
+
+    const makeMarqueeCategory = (header, body) => {
+      const category = document.createElement("div");
+      category.classList.add("marquee-category");
+
+      const marqueeHtmlFragment = `
+        <div class="marquee-header">${header}</div>
+        <div class="marquee-scroll-container">
+          <div class="marquee-scroll">
+            ${body}
+          </div>
+        </div>
+      `;
+
+      category.innerHTML = marqueeHtmlFragment;
+
+      return category;
+    }
+
+    const addMarqueeCategory = (category) => {
+      DIV_MARQUEE.appendChild(cateogry);
+    }
+
+
     await refreshData();
+    // now we have data
+
 
     // add every game twice in a loop
     for (let i = 0; i < recentXBLScores.length * 2; i++) {
@@ -1025,6 +1229,13 @@
     }
 
     DIV_SCOREBOX.classList.add(`vertical-scroll-${DIV_SCOREBOX.childNodes.length}`);
+
+    const xblHrLeaderEntries = xblHrLeaders.map((leader, pos) => {
+      return makeLeaderListEntry(pos + 1, leader.team, leader.value);
+    });
+
+    // TODO continue...
+
   </script>
 </body>
 
