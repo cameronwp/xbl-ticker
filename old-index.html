@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href='https://fonts.googleapis.com/css?family=Oswald' rel='stylesheet'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XBL Ticker</title>
+    <style>
+        body {
+            background-color: #00ff00;
+            margin: 0;
+        }
+
+        .body {
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            margin: 0;
+            padding: 0;
+        }
+
+        .greenscreen {
+            height: calc(100vh - 36px);
+            width: 100%;
+            background-color: #00ff00;
+            z-index: 1;
+        }
+
+        .main {
+            display: flex;
+            width: 100%;
+            z-index: 0;
+        }
+
+        .ticker-background {
+            z-index: 0;
+            display: flex;
+            align-items: flex-start;
+            /* position: fixed; */
+            /* bottom: 0; */
+            background: #323c4d;
+            color: white;
+            text-align: center;
+            z-index: 9999;
+            font-size: 8.6px;
+            min-height: 36px;
+            max-height: 36px;
+        }
+
+        .ticker-container {
+            left: 0;
+            width: 55%;
+        }
+
+        .marquee-container {
+            right: 0;
+            width: 55%;
+        }
+
+        .league-logo-container {
+            min-width: 50px;
+            height: 36px;
+            border-right: 2px solid white;
+        }
+
+        .league-logo {
+            max-height: 28px;
+            padding: 4px;
+            vertical-align: middle;
+            display: none;
+            animation: logoentrance 2s ease 0s 1 normal forwards;
+        }
+
+        .matchup {
+            width: 624px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .matchup:first-child {
+            border-right: 2px solid white;
+        }
+
+        .team {
+            width: 100%;
+            min-width: 314px;
+        }
+
+        .team-info {
+            display: flex;
+            flex-direction: row;
+            animation: entrance 2s ease 0s 1 normal forwards;
+            justify-content: space-between;
+            padding: 0 1rem;
+        }
+
+        .team:first-of-type {
+            border-right: 2px white solid;
+        }
+
+        .team-name {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .team-logo {
+            max-height: 28px;
+            width: auto;
+            height: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+            animation: entrance 2s ease 0s 1 normal forwards;
+            padding-right: 1rem;
+        }
+
+        .team-season {
+            padding-left: 1rem;
+            font-size: 0.75rem !important;
+        }
+
+        .team-score:first-of-type::after {
+            content: "–";
+        }
+
+        .main-text {
+            font-family: 'Oswald';
+            font-size: 1.5rem;
+        }
+
+        .scoreboard-text {
+            white-space: nowrap;
+            overflow: hidden;
+            display: inline-block;
+            animation: entrance 2s ease 0s 1 normal forwards;
+        }
+
+        .season {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .space-filler {
+            min-height: 40%;
+        }
+
+        .bookend-container {
+            min-width: 128px;
+            border-left: 2px solid white;
+        }
+
+        .bookend-text {
+            white-space: nowrap;
+            overflow: hidden;
+            display: none;
+            animation: logoentrance 2s ease 0s 1 normal forwards;
+        }
+
+        .leader-container {
+            display: flex;
+            min-height: 36px;
+        }
+
+        .leader-rank {
+            font-family: 'Oswald';
+            font-size: 1rem;
+            align-self: flex-end;
+        }
+
+        .leader-stat-team-logo {
+            max-height: 28px;
+            padding: 0 .5rem;
+            width: auto;
+            height: auto;
+            align-self: center;
+        }
+
+        .leader-stat-amount {
+            font-family: 'Oswald';
+            font-size: 1.5rem;
+            align-self: flex-end;
+        }
+
+        .leader-stat-team-logo-container {
+            display: flex;
+        }
+
+        .marquee {
+            display: none;
+            overflow: hidden;
+            user-select: none;
+            width: 100%;
+        }
+
+        .marquee-group {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 2.5rem;
+            min-width: 100%;
+            min-height: 100%;
+            animation: scroll 35s linear infinite;
+        }
+
+        .exit {
+            animation: exit 2s ease 0s 1 normal forwards;
+        }
+
+        @keyframes logoentrance {
+            0% {
+                transform: translateY(250px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes entrance {
+            0% {
+                opacity: 0;
+                transform: translateY(250px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes exit {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-250px);
+            }
+        }
+
+        @keyframes scroll {
+            from {
+                transform: translateX(25%);
+            }
+
+            to {
+                transform: translateX(-100%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="body">
+        <div class="greenscreen"></div>
+        <div class="main">
+            <div class="ticker-background ticker-container">
+                <div class="league-logo-container">
+                    <img src="https://i.imgur.com/TaKg7Kt.png" class="league-logo" id="logo">
+                </div>
+                <div class="matchup">
+                    <div class="team">
+                        <div class="team-info team-info-left">
+                            <div class="team-name">
+                                <img class="team-logo" id="awayLogo">
+                                <div class="main-text scoreboard-text" id="awayTeam"></div>
+                                <div class="season">
+                                    <div class="space-filler"></div>
+                                    <div class="team-season main-text scoreboard-text" id="awaySeason"></div>
+                                </div>
+                            </div>
+                            <div class="team-score main-text scoreboard-text" id="awayScore"></div>
+                        </div>
+                    </div>
+                    <div class="team">
+                        <div class="team-info">
+                            <div class="team-name">
+                                <img class="team-logo" id="homeLogo">
+                                <div class="main-text scoreboard-text" id="homeTeam"></div>
+                                <div class="season">
+                                    <div class="space-filler"></div>
+                                    <div class="team-season main-text scoreboard-text" id="homeSeason"></div>
+                                </div>
+                            </div>
+                            <div class="team-score main-text scoreboard-text" id="homeScore"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bookend-container">
+                    <div class="main-text bookend-text" id="bookend-text">
+                    </div>
+                </div>
+            </div>
+            <div class="ticker-background marquee-container">
+                <div class="marquee">
+                    <div class="marquee-group">
+                        <div class="leader-container">
+                            <div class="leader-rank">1.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-1">
+                            <div class="leader-stat-amount" id="leader-stat-1"></div>
+                        </div>
+                        <div class="leader-container">
+                            <div class="leader-rank">2.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-2">
+                            <div class="leader-stat-amount" id="leader-stat-2"></div>
+                        </div>
+                        <div class="leader-container">
+                            <div class="leader-rank">3.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-3">
+                            <div class="leader-stat-amount" id="leader-stat-3"></div>
+                        </div>
+                        <div class="leader-container">
+                            <div class="leader-rank">4.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-4">
+                            <div class="leader-stat-amount" id="leader-stat-4"></div>
+                        </div>
+                        <div class="leader-container">
+                            <div class="leader-rank">5.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-5">
+                            <div class="leader-stat-amount" id="leader-stat-5"></div>
+                        </div>
+                        <div class="leader-container">
+                            <div class="leader-rank">6.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-6">
+                            <div class="leader-stat-amount" id="leader-stat-6"></div>
+                        </div>
+                        <div class="leader-container">
+                            <div class="leader-rank">7.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-7">
+                            <div class="leader-stat-amount" id="leader-stat-7"></div>
+                        </div>
+                        <div class="leader-container">
+                            <div class="leader-rank">8.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-8">
+                            <div class="leader-stat-amount" id="leader-stat-8"></div>
+                        </div>
+                        <div class="leader-container">
+                            <div class="leader-rank">9.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-9">
+                            <div class="leader-stat-amount" id="leader-stat-9"></div>
+                        </div>
+                        <div class="leader-container">
+                            <div class="leader-rank">10.</div>
+                            <img class="leader-stat-team-logo" id="leader-stat-logo-10">
+                            <div class="leader-stat-amount" id="leader-stat-10"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const xblBoxScoresUrl = "https://sheets.googleapis.com/v4/spreadsheets/1x5vwIVqk3-vEypu6dQb9Vb3kzVl9i2tA_zTcDK4I9LU/values/Box%20Scores?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const xblStandingsUrl = "https://sheets.googleapis.com/v4/spreadsheets/1x5vwIVqk3-vEypu6dQb9Vb3kzVl9i2tA_zTcDK4I9LU/values/Standings?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const xblHittingUrl = "https://sheets.googleapis.com/v4/spreadsheets/1x5vwIVqk3-vEypu6dQb9Vb3kzVl9i2tA_zTcDK4I9LU/values/Hitting?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const xblPitchingUrl = "https://sheets.googleapis.com/v4/spreadsheets/1x5vwIVqk3-vEypu6dQb9Vb3kzVl9i2tA_zTcDK4I9LU/values/Pitching?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const aaaBoxScoresUrl = "https://sheets.googleapis.com/v4/spreadsheets/1Dq7fLYeqsvAbwljnzcyhNQ4s2bDeaZky1pQeSJQdAps/values/Box%20Scores?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const aaaStandingsUrl = "https://sheets.googleapis.com/v4/spreadsheets/1Dq7fLYeqsvAbwljnzcyhNQ4s2bDeaZky1pQeSJQdAps/values/Standings?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const aaaHittingUrl = "https://sheets.googleapis.com/v4/spreadsheets/1Dq7fLYeqsvAbwljnzcyhNQ4s2bDeaZky1pQeSJQdAps/values/Hitting?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const aaaPitchingUrl = "https://sheets.googleapis.com/v4/spreadsheets/1Dq7fLYeqsvAbwljnzcyhNQ4s2bDeaZky1pQeSJQdAps/values/Pitching?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const aaBoxScoresUrl = "https://sheets.googleapis.com/v4/spreadsheets/14HmPir8MqsTyQE4BF3nxZVjsJL1MFACto4RDpH9eKqQ/values/Box%20Scores?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const aaStandingsUrl = "https://sheets.googleapis.com/v4/spreadsheets/14HmPir8MqsTyQE4BF3nxZVjsJL1MFACto4RDpH9eKqQ/values/Standings?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const aaHittingUrl = "https://sheets.googleapis.com/v4/spreadsheets/14HmPir8MqsTyQE4BF3nxZVjsJL1MFACto4RDpH9eKqQ/values/Hitting?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const aaPitchingUrl = "https://sheets.googleapis.com/v4/spreadsheets/14HmPir8MqsTyQE4BF3nxZVjsJL1MFACto4RDpH9eKqQ/values/Pitching?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+        const logosUrl = "https://sheets.googleapis.com/v4/spreadsheets/1sMuZIiKGNxOG816mBpdYCHyogIlet_XPMBzF8YWFUus/values/Sheet1?key=AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
+
+        const xblLogoUrl = "https://i.imgur.com/TaKg7Kt.png";
+        const aaaLogoUrl = "https://i.imgur.com/xmunM5b.png";
+        const aaLogoUrl = "https://i.imgur.com/6e0NYVE.png";
+        let teamLogos = {};
+
+        let recentXBLScores = [];
+        let recentAAAScores = [];
+        let recentAAScores = [];
+
+        let xblStandings = {};
+        let aaaStandings = {};
+        let aaStandings = {};
+
+        let xblHrLeaders = [];
+        let aaaHrLeaders = [];
+        let aaHrLeaders = [];
+
+        let xblBaLeaders = [];
+        let aaaBaLeaders = [];
+        let aaBaLeaders = [];
+
+        let xblKLeaders = [];
+        let aaaKLeaders = [];
+        let aaKLeaders = [];
+
+        let scoreIndex = 0; // loops 0 - 5 for recent scores
+        let leagueIndex = 0; // 0 = XBL, 1 = AAA, 2 = AA
+        let leaderboardStatTypeIndex = 0; // 0 = Ks, 1 = Homeruns, 2 = Batting Avg
+
+        let visibleLeagueIndex;
+        let visibleScores;
+        let visibleStandings;
+        let visibleHrLeaders;
+        let visibleKLeaders;
+        let visibleBaLeaders;
+
+        async function updateTicker(leagueIndex) {
+            for (const element of document.getElementsByClassName('team-info')) {
+                element.classList.add('exit');
+            }
+            for (const element of document.getElementsByClassName('team-logo')) {
+                element.classList.add('exit');
+            }
+
+            await sleep(1000);
+
+            for (const element of document.getElementsByClassName('team-info')) {
+                element.classList.remove('exit');
+                element.style.display = 'none';
+            }
+            for (const element of document.getElementsByClassName('team-logo')) {
+                element.classList.remove('exit');
+                element.style.display = 'none';
+            }
+
+            await sleep(100);
+
+            if (visibleLeagueIndex != leagueIndex) {
+                visibleLeagueIndex = leagueIndex;
+
+                if (leagueIndex === 0) {
+                    switchLeaderboardStatType();
+                }
+
+                document.getElementById('logo').style.display = 'none';
+                for (const element of document.getElementsByClassName('marquee')) {
+                    element.style.display = 'none';
+                }
+                for (const element of document.getElementsByClassName('bookend-text')) {
+                    element.style.display = 'none';
+                }
+
+                await sleep(100);
+
+                setLeagueData();
+                setLeaderboard();
+                document.getElementById('logo').style.display = 'inline';
+
+                await sleep(2000);
+
+                for (const element of document.getElementsByClassName('marquee')) {
+                    element.style.display = 'flex';
+                }
+                for (const element of document.getElementsByClassName('bookend-text')) {
+                    element.style.display = 'inline-block';
+                }
+            }
+
+            const score = visibleScores[scoreIndex];
+            const awayTeam = score.awayTeam;
+            const awayScore = score.awayScore;
+            const homeScore = score.homeScore;
+            const homeTeam = score.homeTeam;
+
+            document.getElementById('awayLogo').src = teamLogos[score.awayTeam];
+            document.getElementById('awayTeam').textContent = `${awayTeam}`;
+            document.getElementById('awaySeason').textContent = `(${visibleStandings[awayTeam].wins} - ${visibleStandings[awayTeam].losses})`;
+            document.getElementById('awayScore').textContent = `${awayScore}`;
+            document.getElementById('homeLogo').src = teamLogos[score.homeTeam];
+            document.getElementById('homeTeam').textContent = `${homeTeam}`;
+            document.getElementById('homeSeason').textContent = `(${visibleStandings[homeTeam].wins} - ${visibleStandings[homeTeam].losses})`;
+            document.getElementById('homeScore').textContent = `${homeScore}`;
+
+
+            for (const element of document.getElementsByClassName('team-info')) {
+                element.style.display = 'flex';
+            }
+            for (const element of document.getElementsByClassName('team-info')) {
+                element.style.display = 'flex';
+            }
+            for (const element of document.getElementsByClassName('team-logo')) {
+                element.style.display = 'flex';
+            }
+            for (const element of document.getElementsByClassName('score')) {
+                element.style.display = 'flex';
+            }
+
+            scoreIndex = scoreIndex === 5 ? 0 : scoreIndex + 1;
+        }
+
+        async function refreshData() {
+            let dataPromises = [];
+
+            const requests = {
+                [xblBoxScoresUrl]: (json) => { recentXBLScores = populateScores(json); },
+                [xblStandingsUrl]: (json) => { xblStandings = populateStandings(json); },
+                [xblHittingUrl]: (json) => { xblHrLeaders = populateStatLeaders(json, 7); xblBaLeaders = populateStatLeaders(json, 2); },
+                [xblPitchingUrl]: (json) => { xblKLeaders = populateStatLeaders(json, 9); },
+                [aaaBoxScoresUrl]: (json) => { recentAAAScores = populateScores(json); },
+                [aaaStandingsUrl]: (json) => { aaaStandings = populateStandings(json); },
+                [aaaHittingUrl]: (json) => { aaaHrLeaders = populateStatLeaders(json, 7); aaaBaLeaders = populateStatLeaders(json, 2); },
+                [aaaPitchingUrl]: (json) => { aaaKLeaders = populateStatLeaders(json, 9); },
+                [aaBoxScoresUrl]: (json) => { recentAAScores = populateScores(json); },
+                [aaStandingsUrl]: (json) => { aaStandings = populateStandings(json, true); },
+                [aaHittingUrl]: (json) => { aaHrLeaders = populateStatLeaders(json, 7); aaBaLeaders = populateStatLeaders(json, 2); },
+                [aaPitchingUrl]: (json) => { aaKLeaders = populateStatLeaders(json, 9); },
+            };
+
+            for (const [url, process] of Object.entries(requests)) {
+                dataPromises.push(
+                    fetch(url, { "method": "GET" })
+                        .then((response) => { return response.json(); })
+                        .then((json) => process(json))
+                );
+            }
+
+            dataPromises.push(
+                fetch(logosUrl, { "method": "GET" })
+                    .then((response) => { return response.json(); })
+                    .then((json) => {
+                        for (let i = 1; i < json.values.length; i++) {
+                            const team1 = json.values[i][0];
+                            const teamLogoUrl1 = json.values[i][1];
+                            const team2 = json.values[i][2];
+                            const teamLogoUrl2 = json.values[i][3];
+                            const team3 = json.values[i][4];
+                            const teamLogoUrl3 = json.values[i][5];
+                            teamLogos = {
+                                ...teamLogos,
+                                [`${team1}`]: teamLogoUrl1,
+                                [`${team2}`]: teamLogoUrl2,
+                                [`${team3}`]: teamLogoUrl3
+                            };
+                        }
+                    })
+            );
+
+            return await Promise.all(dataPromises);
+        }
+
+        function populateScores(json) {
+            let scores = [];
+            let gameIndex = json.values.length - 1;
+            for (let i = 0; i < 6; i++) {
+                const boxScore = json.values[gameIndex];
+
+                scores[i] = {
+                    awayTeam: boxScore[1],
+                    awayScore: boxScore[2],
+                    homeScore: boxScore[3],
+                    homeTeam: boxScore[4]
+                };
+
+                gameIndex--;
+            }
+            return scores;
+        }
+
+        function populateStandings(json, isAA) {
+            let standings = {};
+            for (let i = 1; i < json.values.length; i++) {
+                const rank = json.values[i][0];
+                const team = json.values[i][1];
+                const wins = json.values[i][isAA ? 4 : 2];
+                const losses = json.values[i][isAA ? 5 : 3];
+                standings = {
+                    ...standings,
+                    [`${team}`]: { rank, wins, losses }
+                }
+            }
+            return standings;
+        }
+
+        // Row 2 of hitting = BA
+        // Row 7 of hitting = HRs
+        // Row 9 of pitching = Ks
+        function populateStatLeaders(json, statRowIndex) {
+            const parseFloat = statRowIndex === 2;
+            let statLeaders = [];
+            for (let i = 1; i < json.values.length; i++) {
+                const row = json.values[i];
+                statLeaders[i] = {
+                    team: row[1],
+                    value: parseFloat ? Number.parseFloat(row[statRowIndex]) : Number.parseInt(row[statRowIndex])
+                }
+            }
+
+            const sortedLeaders = statLeaders
+                .sort((a, b) => b.value - a.value)
+                .slice(0, 10);
+
+            if (parseFloat) {
+                return sortedLeaders.map(l => ({
+                    team: l.team,
+                    value: String(l.value.toFixed(3)).slice(String(l.value.toFixed(3)).indexOf('.'))
+                }))
+            }
+
+            return sortedLeaders;
+        }
+
+        function switchLeagues() {
+            leagueIndex = leagueIndex == 2 ? 0 : leagueIndex + 1;
+        }
+
+        function switchLeaderboardStatType() {
+            leaderboardStatTypeIndex = leaderboardStatTypeIndex === 2 ? 0 : leaderboardStatTypeIndex + 1;
+        }
+
+        function setLeagueData() {
+            switch (leagueIndex) {
+                case 0: {
+                    document.getElementById('logo').src = xblLogoUrl;
+                    visibleScores = recentXBLScores;
+                    visibleStandings = xblStandings;
+                    visibleHrLeaders = xblHrLeaders;
+                    visibleKLeaders = xblKLeaders;
+                    visibleBaLeaders = xblBaLeaders;
+                    break;
+                }
+                case 1: {
+                    document.getElementById('logo').src = aaaLogoUrl;
+                    visibleScores = recentAAAScores;
+                    visibleStandings = aaaStandings;
+                    visibleHrLeaders = aaaHrLeaders;
+                    visibleKLeaders = aaaKLeaders;
+                    visibleBaLeaders = aaaBaLeaders;
+                    break;
+                }
+                case 2: {
+                    document.getElementById('logo').src = aaLogoUrl;
+                    visibleScores = recentAAScores;
+                    visibleStandings = aaStandings;
+                    visibleHrLeaders = aaHrLeaders;
+                    visibleKLeaders = aaKLeaders;
+                    visibleBaLeaders = aaBaLeaders;
+                    break;
+                }
+            }
+        }
+
+        function setLeaderboard() {
+            let leaderboardStatsTitle;
+            let leaderboardStats;
+
+            switch (leaderboardStatTypeIndex) {
+                case 0: {
+                    leaderboardStatsTitle = 'K Leaders';
+                    leaderboardStats = visibleKLeaders;
+                    break;
+                }
+                case 1: {
+                    leaderboardStatsTitle = 'HR Leaders';
+                    leaderboardStats = visibleHrLeaders;
+                    break;
+                }
+                case 2: {
+                    leaderboardStatsTitle = 'BA Leaders';
+                    leaderboardStats = visibleBaLeaders;
+                    break;
+                }
+            }
+
+            document.getElementById('bookend-text').textContent = leaderboardStatsTitle
+
+            for (let i = 0; i < 10; i++) {
+                document.getElementById(`leader-stat-logo-${i + 1}`).src = teamLogos[leaderboardStats[i].team];
+                document.getElementById(`leader-stat-${i + 1}`).textContent = leaderboardStats[i].value;
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms))
+        }
+
+        refreshData()
+            .then(async () => await updateTicker(leagueIndex))
+            .then(setInterval(async () => await updateTicker(leagueIndex), 11000)); // Update every ~10 seconds
+        setInterval(switchLeagues, 66000); // Switch leagues every ~minute
+        setInterval(refreshData, 300000); // Refresh scores every 5 minutes
+    </script>
+</body>
+
+</html>
