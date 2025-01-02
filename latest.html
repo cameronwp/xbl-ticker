@@ -964,7 +964,13 @@
     const G_SHEETS_API_KEY = "AIzaSyA0I_neFlMHnG6lOpQhmuoEad3kHCcQCc4";
 
     const queryParams = new URLSearchParams(window.location.search);
-    const IN_PLAYOFFS = queryParams.get("playoffs") === "true";
+    const XBL_PLAYOFFS = queryParams.get("xbl-playoffs") === "true";
+    const AAA_PLAYOFFS = queryParams.get("aaa-playoffs") === "true";
+    const AA_PLAYOFFS = queryParams.get("aa-playoffs") === "true";
+
+    const matchupKey = (teamA, teamB) => {
+      return [teamA, teamB].sort().join("");
+    }
 
     class League {
       /** Represents a league's data. Use the getters to access parsed data
@@ -980,6 +986,7 @@
         this._hrLeaders = [];
         this._baLeaders = [];
         this._kLeaders = [];
+        this._playoffMatchups = {};
 
         // raw data from g sheets
         this._data = {};
@@ -1060,6 +1067,58 @@
 
         this._recentScores = scores;
         return this._recentScores;
+      }
+
+      /**
+       * Get playoff matchups
+       * @returns {round: {team: [wins, losses]} */
+      get playoffMatchups() {
+        if (Object.keys(this._playoffMatchups).length > 0) {
+          return this._playoffMatchups;
+        }
+
+        const data = this._data["Playoffs"];
+
+        const parsed = {};
+
+        const numGames = data.values.length;
+        // first row is the header
+        for (let g = 1; g < numGames; g++) {
+          const [playoffRound, awayTeam, awayScore, homeScore, homeTeam, ..._rest] = data.values[g];
+          const key = matchupKey(awayTeam, homeTeam);
+
+          const round = playoffRound.slice(1);
+          const winner = +awayScore > +homeScore ? awayTeam : homeTeam;
+          const awayWon = winner === awayTeam;
+          const homeWon = winner === homeTeam;
+
+          if (!(round in parsed)) {
+            parsed[round] = {};
+          }
+
+          // checking each team separately helps account for the fact that AA has round robins
+          if (!(awayTeam in parsed[round])) {
+            parsed[round][awayTeam] = awayWon ? [1, 0] : [0, 1];
+          } else {
+            if (awayWon) {
+              parsed[round][awayTeam][0] += 1;
+            } else {
+              parsed[round][awayTeam][1] += 1;
+            }
+          }
+          if (!(homeTeam in parsed[round])) {
+            parsed[round][homeTeam] = homeWon ? [1, 0] : [0, 1];
+          } else {
+            if (homeWon) {
+              parsed[round][homeTeam][0] += 1;
+            } else {
+              parsed[round][homeTeam][1] += 1;
+            }
+          }
+        }
+
+        this._playoffMatchups = parsed;
+        return this._playoffMatchups;
       }
 
       /**
@@ -1197,11 +1256,6 @@
       }
     }
 
-    // const xbl = new League("XBL", true);
-    // await Promise.all(xbl.load());
-    // const logos = new Logos();
-    // await Promise.all(logos.load());
-    // console.log(logos.url("Massholes"));
 
     // key page elements
     const DIV_SCOREBOX = document.querySelector(".score-box");
@@ -1209,15 +1263,15 @@
 
 
     // data
-    const XBL = new League("XBL", IN_PLAYOFFS);
-    const AAA = new League("AAA", IN_PLAYOFFS);
-    const AA = new League("AA", IN_PLAYOFFS);
+    const XBL = new League("XBL", XBL_PLAYOFFS);
+    const AAA = new League("AAA", AAA_PLAYOFFS);
+    const AA = new League("AA", AA_PLAYOFFS);
     const LOGOS = new Logos();
 
     async function refreshData() {
-      const allFetcher = [...XBL.load(), ...AAA.load(), ...AA.load(), ...LOGOS.load()];
+      const allFetchers = [...XBL.load(), ...AAA.load(), ...AA.load(), ...LOGOS.load()];
 
-      return await Promise.all(allFetcher);
+      return await Promise.all(allFetchers);
     }
 
     const makeTeam = (name = "Unknown", score = "0", away = false, winner = false, league) => {
@@ -1349,6 +1403,7 @@
     await refreshData();
     // now we have data
 
+    console.log(XBL.playoffMatchups);
 
     // add every game score twice in a loop
     for (let i = 0; i < XBL.recentScores.length * 2; i++) {
